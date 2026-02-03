@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Growth Tracker Pro</title>
+    <meta name="description" content="Manage your profile and track your personal growth journey">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+    
+    <!-- Early Authentication Guard - Must Load First -->
+    <script src="js/auth-guard.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/professional.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--gray-50);
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            padding: 1.5rem;
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            text-decoration: none;
+        }
+        
+        .sidebar-logo i {
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: var(--primary-light);
+            color: var(--primary-color);
+        }
+        
+        .sidebar-nav i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 16px;
+            padding: 3rem;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .profile-header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .profile-info h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-info p {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .profile-stat {
+            text-align: center;
+        }
+        
+        .profile-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: block;
+        }
+        
+        .profile-stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        .profile-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+        
+        .profile-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .profile-card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .profile-card-body {
+            padding: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .achievement-item {
+            text-align: center;
+            padding: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        
+        .achievement-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow);
+        }
+        
+        .achievement-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .achievement-name {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .achievement-date {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.success {
+            background: #d1fae5;
+            color: #10b981;
+        }
+        
+        .activity-icon.info {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+        
+        .activity-icon.warning {
+            background: #fed7aa;
+            color: #f59e0b;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+        
+        @media (max-width: 1024px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .profile-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-stats {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="dashboard-pro.html" class="sidebar-logo">
+                <i class="fas fa-chart-line"></i>
+                Growth Tracker Pro
+            </a>
+            
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="dashboard-pro.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="tasks-pro.html"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li><a href="analytics-pro.html"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                    <li><a href="badges-pro.html"><i class="fas fa-trophy"></i> Badges</a></li>
+                    <li><a href="profile-pro.html" class="active"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="settings-pro.html"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-header-content">
+                    <div class="profile-avatar" id="profileAvatar">
+                        <!-- Avatar will be loaded here -->
+                    </div>
+                    <div class="profile-info">
+                        <h1 id="profileName">John Doe</h1>
+                        <p id="profileEmail">john.doe@example.com</p>
+                        <div class="profile-stats">
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="totalDays">127</span>
+                                <span class="profile-stat-label">Total Days</span>
+                            </div>
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="currentStreak">15</span>
+                                <span class="profile-stat-label">Current Streak</span>
+                            </div>
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="completionRate">89%</span>
+                                <span class="profile-stat-label">Completion Rate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <!-- Edit Profile -->
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <h3 class="profile-card-title">Edit Profile</h3>
+                    </div>
+                    <div class="profile-card-body">
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label class="form-label" for="fullName">Full Name</label>
+                                <input type="text" id="fullName" class="form-input" value="John Doe">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email Address</label>
+                                <input type="email" id="email" class="form-input" value="john.doe@example.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="bio">Bio</label>
+                                <textarea id="bio" class="form-input form-textarea" placeholder="Tell us about yourself...">Passionate about personal growth and habit building. Working on becoming the best version of myself one day at a time.</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="location">Location</label>
+                                <input type="text" id="location" class="form-input" placeholder="City, Country">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="website">Website</label>
+                                <input type="url" id="website" class="form-input" placeholder="https://yourwebsite.com">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Save Changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Recent Achievements -->
+                <div>
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h3 class="profile-card-title">Recent Achievements</h3>
+                        </div>
+                        <div class="profile-card-body">
+                            <div class="achievement-grid">
+                                <div class="achievement-item">
+                                    <div class="achievement-icon">
+                                        <i class="fas fa-fire"></i>
+                                    </div>
+                                    <div class="achievement-name">Week Warrior</div>
+                                    <div class="achievement-date">7 days ago</div>
+                                </div>
+                                
+                                <div class="achievement-item">
+                                    <div class="achievement-icon">
+                                        <i class="fas fa-trophy"></i>
+                                    </div>
+                                    <div class="achievement-name">Habit Master</div>
+                                    <div class="achievement-date">2 weeks ago</div>
+                                </div>
+                                
+                                <div class="achievement-item">
+                                    <div class="achievement-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="achievement-name">Perfect Week</div>
+                                    <div class="achievement-date">3 weeks ago</div>
+                                </div>
+                                
+                                <div class="achievement-item">
+                                    <div class="achievement-icon">
+                                        <i class="fas fa-medal"></i>
+                                    </div>
+                                    <div class="achievement-name">Early Bird</div>
+                                    <div class="achievement-date">1 month ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="profile-card" style="margin-top: 1.5rem;">
+                        <div class="profile-card-header">
+                            <h3 class="profile-card-title">Recent Activity</h3>
+                        </div>
+                        <div class="profile-card-body">
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Completed morning workout</div>
+                                    <div class="activity-time">2 hours ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon info">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Read 20 pages</div>
+                                    <div class="activity-time">5 hours ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Meditated for 10 minutes</div>
+                                    <div class="activity-time">8 hours ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon warning">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Earned "Week Warrior" badge</div>
+                                    <div class="activity-time">1 day ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-tint"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Drank 8 glasses of water</div>
+                                    <div class="activity-time">1 day ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Include Footer -->
+    <div id="footer-container"></div>
+
+    <script src="js/theme-switcher.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script>
+        // Load Navigation Components
+        async function loadNavigation() {
+            try {
+                const response = await fetch('components/navigation.html');
+                const html = await response.text();
+                
+                // Split the HTML into header and footer
+                const parts = html.split('<!-- Footer -->');
+                const footerHtml = '<!-- Footer -->' + parts[1];
+                
+                // Insert only footer (no header for dashboard pages)
+                const footerContainer = document.getElementById('footer-container');
+                if (footerContainer) footerContainer.innerHTML = footerHtml;
+                
+                // Initialize navigation manager
+                if (window.navigationManager) {
+                    window.navigationManager.refreshUserUI();
+                }
+            } catch (error) {
+                console.error('Failed to load navigation:', error);
+            }
+        }
+        
+        // Load navigation when DOM is ready
+        document.addEventListener('DOMContentLoaded', loadNavigation);
+        
+        // Load Profile Data
+        function loadProfileData() {
+            const user = localStorage.getItem('googleUser');
+            if (user) {
+                const userData = JSON.parse(user);
+                
+                // Update profile header
+                document.getElementById('profileName').textContent = userData.name;
+                document.getElementById('profileEmail').textContent = userData.email;
+                
+                // Update avatar
+                const avatarDiv = document.getElementById('profileAvatar');
+                if (userData.picture) {
+                    avatarDiv.innerHTML = `<img src="${userData.picture}" alt="${userData.name}">`;
+                } else {
+                    const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    avatarDiv.textContent = initials;
+                }
+                
+                // Update form
+                document.getElementById('fullName').value = userData.name;
+                document.getElementById('email').value = userData.email;
+            }
+            
+            // Load additional profile data
+            const profileData = localStorage.getItem('profileData');
+            if (profileData) {
+                const data = JSON.parse(profileData);
+                document.getElementById('bio').value = data.bio || '';
+                document.getElementById('location').value = data.location || '';
+                document.getElementById('website').value = data.website || '';
+            }
+            
+            // Load stats
+            loadProfileStats();
+        }
+        
+        // Load Profile Stats
+        function loadProfileStats() {
+            const habitData = JSON.parse(localStorage.getItem('habitData') || '[]');
+            
+            // Calculate total days
+            const totalDays = habitData.length;
+            document.getElementById('totalDays').textContent = totalDays;
+            
+            // Calculate current streak
+            let currentStreak = 0;
+            const today = new Date();
+            for (let i = 0; i < habitData.length; i++) {
+                const habitDate = new Date(habitData[i].date);
+                const daysDiff = Math.floor((today - habitDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff === i) {
+                    const completedHabits = Object.values(habitData[i].habits || {}).filter(Boolean).length;
+                    const totalHabits = Object.keys(habitData[i].habits || {}).length;
+                    
+                    if (totalHabits > 0 && completedHabits / totalHabits >= 0.8) {
+                        currentStreak++;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+            document.getElementById('currentStreak').textContent = currentStreak;
+            
+            // Calculate completion rate
+            let totalHabits = 0;
+            let completedHabits = 0;
+            
+            habitData.forEach(day => {
+                if (day.habits) {
+                    Object.values(day.habits).forEach(completed => {
+                        totalHabits++;
+                        if (completed) completedHabits++;
+                    });
+                }
+            });
+            
+            const completionRate = totalHabits > 0 ? Math.round((completedHabits / totalHabits) * 100) : 0;
+            document.getElementById('completionRate').textContent = completionRate + '%';
+        }
+        
+        // Save Profile Form
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                bio: document.getElementById('bio').value,
+                location: document.getElementById('location').value,
+                website: document.getElementById('website').value
+            };
+            
+            localStorage.setItem('profileData', JSON.stringify(formData));
+            
+            // Show success message
+            const successAlert = document.createElement('div');
+            successAlert.className = 'alert alert-success';
+            successAlert.textContent = 'Profile updated successfully!';
+            successAlert.style.marginTop = '1rem';
+            
+            e.target.appendChild(successAlert);
+            
+            setTimeout(() => {
+                successAlert.remove();
+            }, 3000);
+        });
+        
+        // Check user authentication
+        window.addEventListener('load', () => {
+            const user = localStorage.getItem('googleUser');
+            if (!user) {
+                window.location.href = 'signup-pro.html';
+            } else {
+                loadProfileData();
+            }
+        });
+    </script>
+    <script src="js/theme-switcher.js"></script>
+</body>
+</html>

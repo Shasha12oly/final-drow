@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Growth Tracker Pro</title>
+    <meta name="description" content="Manage your account settings and preferences">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/professional.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--gray-50);
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            padding: 1.5rem;
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-bottom: 2rem;
+        }
+        
+        .sidebar-logo i {
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: var(--primary-light);
+            color: var(--primary-color);
+        }
+        
+        .sidebar-nav i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .settings-header {
+            margin-bottom: 2rem;
+        }
+        
+        .settings-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .settings-header p {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+        
+        .settings-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .settings-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .settings-tab:hover {
+            color: var(--primary-color);
+        }
+        
+        .settings-tab.active {
+            color: var(--primary-color);
+        }
+        
+        .settings-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+        
+        .settings-content {
+            display: none;
+        }
+        
+        .settings-content.active {
+            display: block;
+        }
+        
+        .settings-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .settings-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-group small {
+            display: block;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .toggle-label {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gray-300);
+            transition: var(--transition);
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary-color);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .danger-zone {
+            border: 1px solid #ef4444;
+            background: #fef2f2;
+        }
+        
+        .danger-zone h3 {
+            color: #dc2626;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .notification-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .notification-info {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 500;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .notification-desc {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .settings-tabs {
+                overflow-x: auto;
+            }
+            
+            .settings-tab {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="dashboard-pro.html" class="sidebar-logo">
+                <i class="fas fa-chart-line"></i>
+                Growth Tracker Pro
+            </a>
+            
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="dashboard-pro.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="tasks-pro.html"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li><a href="analytics-pro.html"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                    <li><a href="badges-pro.html"><i class="fas fa-trophy"></i> Badges</a></li>
+                    <li><a href="profile-pro.html"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="settings-pro.html" class="active"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Settings Header -->
+            <div class="settings-header">
+                <h1>Settings</h1>
+                <p>Manage your account settings and preferences</p>
+            </div>
+            
+            <!-- Settings Tabs -->
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="general">General</button>
+                <button class="settings-tab" data-tab="notifications">Notifications</button>
+                <button class="settings-tab" data-tab="privacy">Privacy</button>
+                <button class="settings-tab" data-tab="account">Account</button>
+            </div>
+            
+            <!-- General Settings -->
+            <div class="settings-content active" id="general">
+                <div class="settings-section">
+                    <h3>Profile Information</h3>
+                    <div class="form-group">
+                        <label for="displayName">Display Name</label>
+                        <input type="text" id="displayName" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" placeholder="Tell us about yourself"></textarea>
+                        <small>Brief description for your profile</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="timezone">Timezone</label>
+                        <select id="timezone">
+                            <option value="UTC">UTC</option>
+                            <option value="EST">Eastern Time</option>
+                            <option value="PST">Pacific Time</option>
+                            <option value="IST">India Standard Time</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary">Save Changes</button>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Preferences</h3>
+                    <div class="toggle-group">
+                        <span class="toggle-label">Enable Dark Mode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <span class="toggle-label">Show Progress Charts</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <span class="toggle-label">Compact View</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifications Settings -->
+            <div class="settings-content" id="notifications">
+                <div class="settings-section">
+                    <h3>Email Notifications</h3>
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <div class="notification-title">Daily Reminders</div>
+                            <div class="notification-desc">Get reminded about your daily habits</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <div class="notification-title">Weekly Progress Report</div>
+                            <div class="notification-desc">Summary of your weekly achievements</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <div class="notification-title">Achievement Unlocked</div>
+                            <div class="notification-desc">When you earn new badges</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Push Notifications</h3>
+                    <div class="toggle-group">
+                        <span class="toggle-label">Browser Notifications</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="reminderTime">Default Reminder Time</label>
+                        <input type="time" id="reminderTime" value="09:00">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Privacy Settings -->
+            <div class="settings-content" id="privacy">
+                <div class="settings-section">
+                    <h3>Profile Privacy</h3>
+                    <div class="toggle-group">
+                        <span class="toggle-label">Public Profile</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <span class="toggle-label">Show Achievement Badges</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <span class="toggle-label">Show Progress Stats</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Data Management</h3>
+                    <div class="form-group">
+                        <label for="dataExport">Export Your Data</label>
+                        <button class="btn btn-outline">Download All Data</button>
+                        <small>Download a copy of all your habit tracking data</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account Settings -->
+            <div class="settings-content" id="account">
+                <div class="settings-section">
+                    <h3>Account Information</h3>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="accountType">Account Type</label>
+                        <input type="text" id="accountType" readonly value="Google Account">
+                    </div>
+                    <div class="form-group">
+                        <label for="memberSince">Member Since</label>
+                        <input type="text" id="memberSince" readonly>
+                    </div>
+                </div>
+                
+                <div class="settings-section danger-zone">
+                    <h3>Danger Zone</h3>
+                    <p style="color: #dc2626; margin-bottom: 1rem;">These actions cannot be undone. Please be careful.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn-danger" onclick="clearLocalData()">Clear Local Data</button>
+                        <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Include Footer -->
+    <div id="footer-container"></div>
+
+    <script src="js/theme-switcher.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script>
+        // Load Navigation Components
+        async function loadNavigation() {
+            try {
+                const response = await fetch('components/navigation.html');
+                const html = await response.text();
+                
+                // Split the HTML into header and footer
+                const parts = html.split('<!-- Footer -->');
+                const footerHtml = '<!-- Footer -->' + parts[1];
+                
+                // Insert only footer (no header for dashboard pages)
+                const footerContainer = document.getElementById('footer-container');
+                if (footerContainer) footerContainer.innerHTML = footerHtml;
+                
+                // Initialize navigation manager
+                if (window.navigationManager) {
+                    window.navigationManager.refreshUserUI();
+                }
+            } catch (error) {
+                console.error('Failed to load navigation:', error);
+            }
+        }
+        
+        // Load navigation when DOM is ready
+        document.addEventListener('DOMContentLoaded', loadNavigation);
+        
+        // Settings Tabs
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                
+                // Update active tab
+                document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update active content
+                document.querySelectorAll('.settings-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+        
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            // Set initial state
+            darkModeToggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            darkModeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('selectedTheme', 'dark');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.setItem('selectedTheme', 'light');
+                }
+            });
+        }
+        
+        // Load User Data
+        function loadUserData() {
+            const user = localStorage.getItem('googleUser');
+            if (user) {
+                const userData = JSON.parse(user);
+                
+                // Update form fields
+                const displayName = document.getElementById('displayName');
+                const email = document.getElementById('email');
+                const memberSince = document.getElementById('memberSince');
+                
+                if (displayName) displayName.value = userData.name || '';
+                if (email) email.value = userData.email || '';
+                if (memberSince && userData.signedUpAt) {
+                    memberSince.value = new Date(userData.signedUpAt).toLocaleDateString();
+                }
+            }
+        }
+        
+        // Clear Local Data
+        function clearLocalData() {
+            if (confirm('Are you sure you want to clear all local data? This will remove all your saved habits and preferences.')) {
+                localStorage.clear();
+                alert('Local data cleared successfully!');
+                window.location.reload();
+            }
+        }
+        
+        // Delete Account
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                // In a real app, this would make an API call
+                localStorage.clear();
+                alert('Account deleted successfully!');
+                window.location.href = 'signup-pro.html';
+            }
+        }
+        
+        // Save Settings
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // In a real app, this would save to backend
+                alert('Settings saved successfully!');
+            });
+        });
+        
+        // Check user authentication and load data
+        window.addEventListener('load', () => {
+            const user = localStorage.getItem('googleUser');
+            if (!user) {
+                window.location.href = 'signup-pro.html';
+            } else {
+                loadUserData();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Growth Tracker Pro</title>
+    <meta name="description" content="Analyze your habit patterns and track your progress with detailed analytics">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+    
+    <!-- Simple Authentication Check -->
+    <script>
+        if (!localStorage.getItem('googleUser')) {
+            window.location.href = 'signup-pro.html';
+        }
+    </script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/professional.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* Enhanced Dashboard Styles */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+        
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-primary);
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 3rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .sidebar-logo:hover {
+            transform: translateX(4px);
+        }
+        
+        .sidebar-logo i {
+            margin-right: 0.75rem;
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: var(--transition);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-nav a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: var(--transition);
+        }
+        
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--accent);
+            transform: translateX(4px);
+        }
+        
+        .sidebar-nav a.active::before {
+            transform: translateX(0);
+        }
+        
+        .sidebar-nav i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg-primary);
+        }
+        
+        /* Analytics Header */
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        
+        .analytics-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .analytics-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .user-menu:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        /* Date Range Selector */
+        .date-range-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .date-range-btn {
+            padding: 0.75rem 1.25rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .date-range-btn:hover,
+        .date-range-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        /* Analytics Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .analytics-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .analytics-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .analytics-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding: 2rem 2rem 0 2rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            padding: 0 2rem 2rem 2rem;
+        }
+        
+        /* Habit Performance */
+        .habit-performance {
+            padding: 2rem;
+        }
+        
+        .habit-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: var(--transition);
+        }
+        
+        .habit-item:hover {
+            background: var(--bg-tertiary);
+            transform: translateX(4px);
+        }
+        
+        .habit-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .habit-stats {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .completion-rate {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+        
+        .progress-bar {
+            width: 120px;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Theme Selector */
+        .theme-selector {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+        
+        .theme-toggle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--accent);
+            border: 2px solid var(--border);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .analytics-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .theme-selector {
+                top: 1rem;
+                right: 1rem;
+            }
+            
+            .theme-toggle {
+                width: 48px;
+                height: 48px;
+                font-size: 1.125rem;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="dashboard-pro.html" class="sidebar-logo">
+                <i class="fas fa-chart-line"></i>
+                Growth Tracker Pro
+            </a>
+            
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="dashboard-pro.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="tasks-pro.html"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li><a href="analytics-pro.html" class="active"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                    <li><a href="badges-pro.html"><i class="fas fa-trophy"></i> Badges</a></li>
+                    <li><a href="profile-pro.html"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="settings-pro.html"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Analytics Header -->
+            <div class="analytics-header fade-in-up">
+                <div>
+                    <h1>Analytics Dashboard</h1>
+                    <p>Track your progress and analyze your habit patterns</p>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sign Out
+                    </button>
+                    <div class="user-menu">
+                        <div class="user-avatar" id="userAvatar">JD</div>
+                        <span id="userName">John Doe</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Date Range Selector -->
+            <div class="date-range-selector fade-in-up">
+                <button class="date-range-btn" data-range="7">Last 7 Days</button>
+                <button class="date-range-btn active" data-range="30">Last 30 Days</button>
+                <button class="date-range-btn" data-range="90">Last 90 Days</button>
+                <button class="date-range-btn" data-range="365">Last Year</button>
+                <button class="date-range-btn" data-range="all">All Time</button>
+            </div>
+            
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card fade-in-up">
+                    <div class="stat-value">87%</div>
+                    <div class="stat-label">Overall Completion Rate</div>
+                </div>
+                <div class="stat-card fade-in-up">
+                    <div class="stat-value">24</div>
+                    <div class="stat-label">Current Streak (Days)</div>
+                </div>
+                <div class="stat-card fade-in-up">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Total Habits Completed</div>
+                </div>
+                <div class="stat-card fade-in-up">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Active Habits</div>
+                </div>
+            </div>
+            
+            <!-- Analytics Grid -->
+            <div class="analytics-grid">
+                <!-- Progress Chart -->
+                <div class="analytics-card fade-in-up">
+                    <h3>Progress Over Time</h3>
+                    <div class="chart-container">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Habit Categories -->
+                <div class="analytics-card fade-in-up">
+                    <h3>Habit Categories</h3>
+                    <div class="chart-container">
+                        <canvas id="categoriesChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Weekly Pattern -->
+                <div class="analytics-card fade-in-up">
+                    <h3>Weekly Pattern</h3>
+                    <div class="chart-container">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Habit Performance -->
+                <div class="analytics-card fade-in-up">
+                    <h3>Habit Performance</h3>
+                    <div class="habit-performance">
+                        <div class="habit-item">
+                            <span class="habit-name">Morning Exercise</span>
+                            <div class="habit-stats">
+                                <span class="completion-rate">92%</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 92%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="habit-item">
+                            <span class="habit-name">Read for 30 min</span>
+                            <div class="habit-stats">
+                                <span class="completion-rate">78%</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 78%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="habit-item">
+                            <span class="habit-name">Meditation</span>
+                            <div class="habit-stats">
+                                <span class="completion-rate">85%</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="habit-item">
+                            <span class="habit-name">Drink 8 glasses water</span>
+                            <div class="habit-stats">
+                                <span class="completion-rate">95%</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 95%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="habit-item">
+                            <span class="habit-name">Code for 1 hour</span>
+                            <div class="habit-stats">
+                                <span class="completion-rate">67%</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 67%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Theme Selector -->
+    <div class="theme-selector">
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+    </div>
+    
+    <!-- Include Footer -->
+    <div id="footer-container"></div>
+
+    <script>
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+        
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+            
+            // Update charts for theme change
+            updateChartsTheme();
+        }
+        
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
+            if (icon) {
+                icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            }
+        }
+        
+        // Initialize theme
+        initTheme();
+        
+        // Chart Management
+        let charts = {};
+        
+        function getChartColors() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            return {
+                text: isDark ? '#ffffff' : '#1e293b',
+                grid: isDark ? '#374151' : '#e5e7eb',
+                accent: '#4f46e5',
+                success: '#10b981',
+                warning: '#f59e0b',
+                danger: '#ef4444',
+                purple: '#9333ea'
+            };
+        }
+        
+        function initializeCharts() {
+            const colors = getChartColors();
+            
+            // Progress Chart
+            const progressCtx = document.getElementById('progressChart');
+            if (progressCtx) {
+                charts.progressChart = new Chart(progressCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                        datasets: [{
+                            label: 'Completion Rate',
+                            data: [75, 82, 88, 87],
+                            borderColor: colors.accent,
+                            backgroundColor: `${colors.accent}20`,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: colors.accent,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: colors.grid,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: colors.text
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: {
+                                    color: colors.grid,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: colors.text
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Categories Chart
+            const categoriesCtx = document.getElementById('categoriesChart');
+            if (categoriesCtx) {
+                charts.categoriesChart = new Chart(categoriesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Health', 'Learning', 'Productivity', 'Mindfulness'],
+                        datasets: [{
+                            data: [35, 25, 30, 10],
+                            backgroundColor: [
+                                colors.accent,
+                                colors.success,
+                                colors.warning,
+                                colors.purple
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: colors.text,
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Weekly Pattern Chart
+            const weeklyCtx = document.getElementById('weeklyChart');
+            if (weeklyCtx) {
+                charts.weeklyChart = new Chart(weeklyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Habits Completed',
+                            data: [8, 7, 9, 6, 8, 5, 4],
+                            backgroundColor: colors.accent,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: colors.grid,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: colors.text
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: colors.grid,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: colors.text
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        function updateChartsTheme() {
+            const colors = getChartColors();
+            
+            // Update all charts with new theme colors
+            Object.values(charts).forEach(chart => {
+                if (chart.options.scales) {
+                    if (chart.options.scales.x) {
+                        chart.options.scales.x.grid.color = colors.grid;
+                        chart.options.scales.x.ticks.color = colors.text;
+                    }
+                    if (chart.options.scales.y) {
+                        chart.options.scales.y.grid.color = colors.grid;
+                        chart.options.scales.y.ticks.color = colors.text;
+                    }
+                }
+                
+                if (chart.options.plugins && chart.options.plugins.legend) {
+                    chart.options.plugins.legend.labels.color = colors.text;
+                }
+                
+                chart.update();
+            });
+        }
+        
+        // Date Range Selector
+        document.querySelectorAll('.date-range-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.date-range-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Here you would typically fetch new data based on the selected range
+                const range = this.getAttribute('data-range');
+                console.log('Selected range:', range);
+            });
+        });
+        
+        // User Management
+        function updateUserInfo(user) {
+            if (!user) return;
+            
+            // Update user avatar
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar) {
+                if (user.picture) {
+                    userAvatar.innerHTML = '<img src="' + user.picture + '" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">';
+                } else {
+                    userAvatar.textContent = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                }
+            }
+            
+            // Update user name
+            const userName = document.getElementById('userName');
+            if (userName) {
+                userName.textContent = user.name;
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('googleUser');
+            window.location.href = 'signup-pro.html';
+        }
+        
+        // Initialize Analytics
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate user data
+            const currentUser = {
+                id: 'user123',
+                name: 'John Doe',
+                email: 'john@example.com',
+                picture: null
+            };
+            
+            updateUserInfo(currentUser);
+            initializeCharts();
+            
+            // Add fade-in animation to elements
+            const elements = document.querySelectorAll('.fade-in-up');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+        
+        // Load Navigation Components
+        async function loadNavigation() {
+            try {
+                const response = await fetch('components/navigation.html');
+                const html = await response.text();
+                
+                const parts = html.split('<!-- Footer -->');
+                const footerHtml = '<!-- Footer -->' + parts[1];
+                
+                const footerContainer = document.getElementById('footer-container');
+                if (footerContainer) footerContainer.innerHTML = footerHtml;
+                
+            } catch (error) {
+                console.error('Failed to load navigation:', error);
+            }
+        }
+        
+        // Load navigation when DOM is ready
+        document.addEventListener('DOMContentLoaded', loadNavigation);
+    </script>
+</body>
+</html>
