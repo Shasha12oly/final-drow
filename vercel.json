@@ -51,18 +51,14 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/",
-      "dest": "/signup-pro.html"
+      "source": "/",
+      "destination": "/signup-pro.html"
     },
     {
-      "src": "/index.html",
-      "dest": "/signup-pro.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/index.html",
+      "destination": "/signup-pro.html"
     }
   ],
   "headers": [
