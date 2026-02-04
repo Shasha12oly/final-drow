@@ -1,0 +1,261 @@
+<!-- Header Navigation -->
+<header class="main-header">
+    <!-- Early Navigation Protection -->
+    <script>
+        (function() {
+            const user = localStorage.getItem('googleUser');
+            
+            // Immediately protect all navigation links
+            document.addEventListener('DOMContentLoaded', function() {
+                const navLinks = document.querySelectorAll('.main-header-link, .mobile-menu-nav a, .sidebar-nav a');
+                
+                navLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    
+                    // Allow these links for unauthenticated users
+                    const allowedLinks = ['/', '/signup-pro.html', 'signup-pro.html'];
+                    const isAllowed = allowedLinks.includes(href) || href.includes('signup-pro.html');
+                    
+                    if (!user && !isAllowed) {
+                        // Prevent default click behavior
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            // Show authentication required popup
+                            showNavAuthPopup();
+                        });
+                        
+                        // Add visual indication that link is disabled
+                        link.style.opacity = '0.6';
+                        link.style.cursor = 'not-allowed';
+                        link.title = 'Sign in required';
+                    }
+                });
+            });
+            
+            // Also run immediately if DOM is already loaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', arguments.callee);
+            } else {
+                arguments.callee();
+            }
+        })();
+        
+        function showNavAuthPopup() {
+            // Remove existing popup if any
+            const existingPopup = document.getElementById('nav-auth-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.id = 'nav-auth-popup';
+            popup.innerHTML = `
+                <div class="nav-popup-content">
+                    <div class="nav-popup-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h4>Sign In Required</h4>
+                    <p>Please sign in to access this feature.</p>
+                    <button onclick="window.location.href='/signup-pro.html'" class="btn btn-primary btn-sm">
+                        Sign In
+                    </button>
+                    <button onclick="this.closest('#nav-auth-popup').remove()" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;">
+                        Close
+                    </button>
+                </div>
+            `;
+
+            // Add styles
+            popup.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                padding: 1rem;
+                z-index: 10001;
+                max-width: 250px;
+                animation: slideDown 0.3s ease-out;
+                border: 1px solid #e2e8f0;
+            `;
+
+            // Add CSS for popup content
+            if (!document.querySelector('#nav-popup-styles')) {
+                const style = document.createElement('style');
+                style.id = 'nav-popup-styles';
+                style.textContent = `
+                    .nav-popup-content {
+                        text-align: center;
+                    }
+                    
+                    .nav-popup-icon {
+                        font-size: 1.5rem;
+                        color: #4f46e5;
+                        margin-bottom: 0.5rem;
+                    }
+                    
+                    .nav-popup-content h4 {
+                        margin: 0 0 0.25rem 0;
+                        color: #1e293b;
+                        font-size: 1rem;
+                        font-weight: 600;
+                    }
+                    
+                    .nav-popup-content p {
+                        margin: 0 0 0.75rem 0;
+                        color: #64748b;
+                        font-size: 0.875rem;
+                    }
+                    
+                    .btn-sm {
+                        padding: 0.375rem 0.75rem;
+                        font-size: 0.875rem;
+                    }
+                    
+                    @keyframes slideDown {
+                        from {
+                            transform: translateY(-20px);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateY(0);
+                            opacity: 1;
+                        }
+                    }
+                    
+                    @media (max-width: 640px) {
+                        #nav-auth-popup {
+                            top: 60px;
+                            right: 10px;
+                            left: 10px;
+                            max-width: none;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            document.body.appendChild(popup);
+
+            // Auto-hide after 4 seconds
+            setTimeout(() => {
+                if (document.getElementById('nav-auth-popup')) {
+                    popup.style.animation = 'slideDown 0.3s ease-out reverse';
+                    setTimeout(() => popup.remove(), 300);
+                }
+            }, 4000);
+        }
+    </script>
+    
+    <div class="main-header-container">
+        <a href="dashboard-pro.html" class="main-header-brand">
+            <i class="fas fa-chart-line"></i>
+            Growth Tracker Pro
+        </a>
+        
+        <nav class="main-header-nav">
+            <a href="dashboard-pro.html" class="main-header-link">Dashboard</a>
+            <a href="tasks-pro.html" class="main-header-link">Tasks</a>
+            <a href="analytics-pro.html" class="main-header-link">Analytics</a>
+            <a href="badges-pro.html" class="main-header-link">Badges</a>
+            <a href="leaderboard-pro.html" class="main-header-link">Leaderboard</a>
+            <a href="profile-pro.html" class="main-header-link">Profile</a>
+        </nav>
+        
+        <div class="main-header-actions">
+            <a href="signup-pro.html" class="btn btn-outline">Sign In</a>
+            <div class="user-menu" id="userMenu" style="display: none;">
+                <div class="user-avatar" id="userAvatar"></div>
+                <span id="userName"></span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <a href="dashboard-pro.html" class="main-header-brand">
+            <i class="fas fa-chart-line"></i>
+            Growth Tracker Pro
+        </a>
+        <button class="mobile-menu-close" id="mobileMenuClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <nav>
+        <ul class="mobile-menu-nav">
+            <li><a href="dashboard-pro.html">Dashboard</a></li>
+            <li><a href="tasks-pro.html">Tasks</a></li>
+            <li><a href="analytics-pro.html">Analytics</a></li>
+            <li><a href="badges-pro.html">Badges</a></li>
+            <li><a href="leaderboard-pro.html">Leaderboard</a></li>
+            <li><a href="profile-pro.html">Profile</a></li>
+        </ul>
+    </nav>
+    
+    <div class="mobile-menu-actions">
+        <a href="signup-pro.html" class="btn btn-outline w-full">Sign In</a>
+        <button class="btn btn-primary w-full mt-2" onclick="logout()">Sign Out</button>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="main-footer-container">
+        <div class="main-footer-grid">
+            <div class="main-footer-section">
+                <h4>Growth Tracker Pro</h4>
+                <p>Transform your life with intelligent habit tracking and data-driven insights.</p>
+                <div class="main-footer-social">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            
+            <div class="main-footer-section">
+                <h4>Product</h4>
+                <ul class="main-footer-links">
+                    <li><a href="index-pro.html">Features</a></li>
+                    <li><a href="dashboard-pro.html">Dashboard</a></li>
+                    <li><a href="tasks-pro.html">Tasks</a></li>
+                    <li><a href="#">API</a></li>
+                </ul>
+            </div>
+            
+            <div class="main-footer-section">
+                <h4>Company</h4>
+                <ul class="main-footer-links">
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+            </div>
+            
+            <div class="main-footer-section">
+                <h4>Support</h4>
+                <ul class="main-footer-links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">Status</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="main-footer-bottom">
+            <p>&copy; 2024 Growth Tracker Pro. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
