@@ -22,6 +22,9 @@
     <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <!-- User Data Manager -->
+    <script src="js/user-data-manager.js"></script>
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -431,320 +434,6 @@
         }
     </style>
 </head>
-        
-        .sidebar-nav {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .sidebar-nav li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            color: var(--gray-600);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        .sidebar-nav a:hover,
-        .sidebar-nav a.active {
-            background: var(--primary-light);
-            color: var(--primary-color);
-        }
-        
-        .sidebar-nav i {
-            margin-right: 0.75rem;
-            width: 20px;
-        }
-        
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-        }
-        
-        .page-header {
-            margin-bottom: 2rem;
-        }
-        
-        .page-title {
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .page-subtitle {
-            color: var(--gray-600);
-        }
-        
-        .badges-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .overview-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--gray-200);
-            padding: 1.5rem;
-            text-align: center;
-        }
-        
-        .overview-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        
-        .overview-icon.gold {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: white;
-        }
-        
-        .overview-icon.silver {
-            background: linear-gradient(135deg, #e5e7eb, #9ca3af);
-            color: white;
-        }
-        
-        .overview-icon.bronze {
-            background: linear-gradient(135deg, #d97706, #92400e);
-            color: white;
-        }
-        
-        .overview-icon.blue {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-        }
-        
-        .overview-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
-        }
-        
-        .overview-label {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-        
-        .badges-categories {
-            margin-bottom: 2rem;
-        }
-        
-        .category-tabs {
-            display: flex;
-            gap: 0.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 2rem;
-        }
-        
-        .category-tab {
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            color: var(--gray-600);
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            border-bottom: 2px solid transparent;
-        }
-        
-        .category-tab:hover {
-            color: var(--primary-color);
-        }
-        
-        .category-tab.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-        
-        .badges-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-        
-        .badge-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--gray-200);
-            overflow: hidden;
-            transition: var(--transition);
-        }
-        
-        .badge-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-        }
-        
-        .badge-card.locked {
-            opacity: 0.6;
-        }
-        
-        .badge-header {
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-        }
-        
-        .badge-card.gold .badge-header {
-            background: linear-gradient(135deg, #fef3c7, #fbbf24);
-        }
-        
-        .badge-card.silver .badge-header {
-            background: linear-gradient(135deg, #f3f4f6, #d1d5db);
-        }
-        
-        .badge-card.bronze .badge-header {
-            background: linear-gradient(135deg, #fed7aa, #f59e0b);
-        }
-        
-        .badge-card.blue .badge-header {
-            background: linear-gradient(135deg, #dbeafe, #3b82f6);
-        }
-        
-        .badge-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--dark-color);
-            box-shadow: var(--shadow);
-        }
-        
-        .badge-card.locked .badge-icon {
-            background: rgba(156, 163, 175, 0.3);
-            color: var(--gray-400);
-        }
-        
-        .badge-name {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .badge-description {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-        
-        .badge-progress {
-            margin-bottom: 1rem;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--gray-200);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-color);
-            transition: width 0.3s ease;
-        }
-        
-        .progress-text {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            margin-top: 0.5rem;
-        }
-        
-        .badge-body {
-            padding: 1.5rem;
-        }
-        
-        .badge-requirements {
-            margin-bottom: 1rem;
-        }
-        
-        .requirement-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--gray-600);
-        }
-        
-        .requirement-item.completed {
-            color: var(--success-color);
-        }
-        
-        .requirement-item i {
-            width: 16px;
-        }
-        
-        .badge-earned {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        
-        .badge-locked {
-            background: #f3f4f6;
-            color: #6b7280;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-            
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .badges-overview {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .badges-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .category-tabs {
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-        }
-    </style>
-</head>
 <body>
     <div class="dashboard-layout">
         <!-- Sidebar -->
@@ -760,6 +449,7 @@
                     <li><a href="tasks-pro.html"><i class="fas fa-tasks"></i> Tasks</a></li>
                     <li><a href="analytics-pro.html"><i class="fas fa-chart-bar"></i> Analytics</a></li>
                     <li><a href="badges-pro.html" class="active"><i class="fas fa-trophy"></i> Badges</a></li>
+                    <li><a href="leaderboard-pro.html"><i class="fas fa-medal"></i> Leaderboard</a></li>
                     <li><a href="profile-pro.html"><i class="fas fa-user"></i> Profile</a></li>
                     <li><a href="settings-pro.html"><i class="fas fa-cog"></i> Settings</a></li>
                 </ul>
@@ -768,364 +458,236 @@
         
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Page Header -->
-            <div class="page-header">
-                <h1 class="page-title">Achievements & Badges</h1>
-                <p class="page-subtitle">Track your progress and celebrate your accomplishments</p>
-            </div>
-            
-            <!-- Badges Overview -->
-            <div class="badges-overview">
-                <div class="overview-card">
-                    <div class="overview-icon gold">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="overview-value">12</div>
-                    <div class="overview-label">Gold Badges</div>
+            <!-- Badges Header -->
+            <div class="badges-header">
+                <div>
+                    <h1>Achievements & Badges</h1>
+                    <p>Track your progress and celebrate your accomplishments</p>
                 </div>
-                
-                <div class="overview-card">
-                    <div class="overview-icon silver">
-                        <i class="fas fa-medal"></i>
+                <div class="header-actions">
+                    <div class="user-menu">
+                        <div class="user-avatar" id="userAvatar"></div>
+                        <span id="userName"></span>
                     </div>
-                    <div class="overview-value">8</div>
-                    <div class="overview-label">Silver Badges</div>
-                </div>
-                
-                <div class="overview-card">
-                    <div class="overview-icon bronze">
-                        <i class="fas fa-award"></i>
-                    </div>
-                    <div class="overview-value">15</div>
-                    <div class="overview-label">Bronze Badges</div>
-                </div>
-                
-                <div class="overview-card">
-                    <div class="overview-icon blue">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="overview-value">35</div>
-                    <div class="overview-label">Total Points</div>
                 </div>
             </div>
             
-            <!-- Badges Categories -->
-            <div class="badges-categories">
-                <div class="category-tabs">
-                    <button class="category-tab active" onclick="showCategory('all')">All Badges</button>
-                    <button class="category-tab" onclick="showCategory('streaks')">Streaks</button>
-                    <button class="category-tab" onclick="showCategory('consistency')">Consistency</button>
-                    <button class="category-tab" onclick="showCategory('milestones')">Milestones</button>
-                    <button class="category-tab" onclick="showCategory('special')">Special</button>
+            <!-- Stats Overview -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Gold Badges</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Silver Badges</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Bronze Badges</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">35</div>
+                    <div class="stat-label">Total Points</div>
                 </div>
             </div>
             
             <!-- Badges Grid -->
-            <div class="badges-grid" id="badgesGrid">
+            <div class="badges-grid">
                 <!-- Week Warrior Badge -->
-                <div class="badge-card gold" data-category="streaks">
-                    <div class="badge-header">
-                        <div class="badge-icon">
-                            <i class="fas fa-fire"></i>
-                        </div>
-                        <div class="badge-name">Week Warrior</div>
-                        <div class="badge-description">Complete all habits for 7 consecutive days</div>
+                <div class="badge-card earned">
+                    <div class="badge-icon">
+                        <i class="fas fa-fire"></i>
                     </div>
-                    <div class="badge-body">
-                        <div class="badge-earned">
-                            <i class="fas fa-check"></i> Earned on Jan 15, 2024
+                    <div class="badge-name">Week Warrior</div>
+                    <div class="badge-description">Complete all habits for 7 consecutive days</div>
+                    <div class="badge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
                         </div>
-                        <div class="badge-requirements">
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>7 day streak achieved</span>
-                            </div>
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>80% completion rate</span>
-                            </div>
-                        </div>
+                        <div class="progress-text">Completed! 🎉</div>
                     </div>
                 </div>
                 
                 <!-- Habit Master Badge -->
-                <div class="badge-card gold" data-category="consistency">
-                    <div class="badge-header">
-                        <div class="badge-icon">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                        <div class="badge-name">Habit Master</div>
-                        <div class="badge-description">Maintain 90% completion rate for 30 days</div>
+                <div class="badge-card earned">
+                    <div class="badge-icon">
+                        <i class="fas fa-crown"></i>
                     </div>
-                    <div class="badge-body">
-                        <div class="badge-earned">
-                            <i class="fas fa-check"></i> Earned on Jan 10, 2024
+                    <div class="badge-name">Habit Master</div>
+                    <div class="badge-description">Maintain 90% completion rate for 30 days</div>
+                    <div class="badge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
                         </div>
-                        <div class="badge-requirements">
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>30 days tracked</span>
-                            </div>
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>90% completion rate</span>
-                            </div>
-                        </div>
+                        <div class="progress-text">Completed! 🎉</div>
                     </div>
                 </div>
                 
                 <!-- Early Bird Badge -->
-                <div class="badge-card silver" data-category="special">
-                    <div class="badge-header">
-                        <div class="badge-icon">
-                            <i class="fas fa-sun"></i>
-                        </div>
-                        <div class="badge-name">Early Bird</div>
-                        <div class="badge-description">Complete morning habits before 8 AM for 14 days</div>
+                <div class="badge-card earned">
+                    <div class="badge-icon">
+                        <i class="fas fa-sun"></i>
                     </div>
-                    <div class="badge-body">
-                        <div class="badge-earned">
-                            <i class="fas fa-check"></i> Earned on Dec 28, 2023
+                    <div class="badge-name">Early Bird</div>
+                    <div class="badge-description">Complete morning habits before 8 AM for 14 days</div>
+                    <div class="badge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
                         </div>
-                        <div class="badge-requirements">
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>14 early completions</span>
-                            </div>
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Before 8 AM</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Perfect Week Badge -->
-                <div class="badge-card gold" data-category="consistency">
-                    <div class="badge-header">
-                        <div class="badge-icon">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="badge-name">Perfect Week</div>
-                        <div class="badge-description">100% completion rate for an entire week</div>
-                    </div>
-                    <div class="badge-body">
-                        <div class="badge-earned">
-                            <i class="fas fa-check"></i> Earned on Jan 5, 2024
-                        </div>
-                        <div class="badge-requirements">
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>7 days tracked</span>
-                            </div>
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>100% completion</span>
-                            </div>
-                        </div>
+                        <div class="progress-text">Completed! 🎉</div>
                     </div>
                 </div>
                 
                 <!-- Month Warrior Badge -->
-                <div class="badge-card bronze" data-category="streaks">
-                    <div class="badge-header">
-                        <div class="badge-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="badge-name">Month Warrior</div>
-                        <div class="badge-description">Complete all habits for 30 consecutive days</div>
+                <div class="badge-card locked">
+                    <div class="badge-icon">
+                        <i class="fas fa-calendar-check"></i>
                     </div>
-                    <div class="badge-body">
-                        <div class="badge-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 73%;"></div>
-                            </div>
-                            <div class="progress-text">22/30 days completed</div>
+                    <div class="badge-name">Month Warrior</div>
+                    <div class="badge-description">Complete all habits for 30 consecutive days</div>
+                    <div class="badge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 73%;"></div>
                         </div>
-                        <div class="badge-requirements">
-                            <div class="requirement-item">
-                                <i class="fas fa-circle"></i>
-                                <span>30 day streak</span>
-                            </div>
-                            <div class="requirement-item">
-                                <i class="fas fa-circle"></i>
-                                <span>All habits completed</span>
-                            </div>
-                        </div>
+                        <div class="progress-text">22/30 days completed</div>
                     </div>
                 </div>
                 
                 <!-- Century Club Badge -->
-                <div class="badge-card locked" data-category="milestones">
-                    <div class="badge-header">
-                        <div class="badge-icon">
-                            <i class="fas fa-bullseye"></i>
-                        </div>
-                        <div class="badge-name">Century Club</div>
-                        <div class="badge-description">Track habits for 100 consecutive days</div>
+                <div class="badge-card locked">
+                    <div class="badge-icon">
+                        <i class="fas fa-bullseye"></i>
                     </div>
-                    <div class="badge-body">
-                        <div class="badge-locked">
-                            <i class="fas fa-lock"></i> Locked
+                    <div class="badge-name">Century Club</div>
+                    <div class="badge-description">Track habits for 100 consecutive days</div>
+                    <div class="badge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%;"></div>
                         </div>
-                        <div class="badge-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 45%;"></div>
-                            </div>
-                            <div class="progress-text">45/100 days completed</div>
-                        </div>
-                        <div class="badge-requirements">
-                            <div class="requirement-item">
-                                <i class="fas fa-circle"></i>
-                                <span>100 day streak</span>
-                            </div>
-                            <div class="requirement-item">
-                                <i class="fas fa-circle"></i>
-                                <span>No missed days</span>
-                            </div>
-                        </div>
+                        <div class="progress-text">45/100 days completed</div>
                     </div>
                 </div>
                 
                 <!-- Speed Demon Badge -->
-                <div class="badge-card blue" data-category="special">
-                    <div class="badge-header">
-                        <div class="badge-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="badge-name">Speed Demon</div>
-                        <div class="badge-description">Complete all daily habits within 2 hours</div>
+                <div class="badge-card earned">
+                    <div class="badge-icon">
+                        <i class="fas fa-bolt"></i>
                     </div>
-                    <div class="badge-body">
-                        <div class="badge-earned">
-                            <i class="fas fa-check"></i> Earned on Jan 20, 2024
+                    <div class="badge-name">Speed Demon</div>
+                    <div class="badge-description">Complete all daily habits within 2 hours</div>
+                    <div class="badge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
                         </div>
-                        <div class="badge-requirements">
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>All habits completed</span>
-                            </div>
-                            <div class="requirement-item completed">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Under 2 hours</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Night Owl Badge -->
-                <div class="badge-card locked" data-category="special">
-                    <div class="badge-header">
-                        <div class="badge-icon">
-                            <i class="fas fa-moon"></i>
-                        </div>
-                        <div class="badge-name">Night Owl</div>
-                        <div class="badge-description">Complete evening habits after 10 PM for 21 days</div>
-                    </div>
-                    <div class="badge-body">
-                        <div class="badge-locked">
-                            <i class="fas fa-lock"></i> Locked
-                        </div>
-                        <div class="badge-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 33%;"></div>
-                            </div>
-                            <div class="progress-text">7/21 days completed</div>
-                        </div>
-                        <div class="badge-requirements">
-                            <div class="requirement-item">
-                                <i class="fas fa-circle"></i>
-                                <span>21 evening completions</span>
-                            </div>
-                            <div class="requirement-item">
-                                <i class="fas fa-circle"></i>
-                                <span>After 10 PM</span>
-                            </div>
-                        </div>
+                        <div class="progress-text">Completed! 🎉</div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <div id="footer-container"></div>
+
     <script>
-        // Show Category
-        function showCategory(category) {
-            // Update active tab
-            const tabs = document.querySelectorAll('.category-tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+        // Load Badge Data with Real User Data
+        function loadBadgeData() {
+            const badgesData = window.userDataManager.getBadgesData();
             
-            // Filter badges
-            const badges = document.querySelectorAll('.badge-card');
-            badges.forEach(badge => {
-                if (category === 'all') {
-                    badge.style.display = 'block';
-                } else {
-                    const badgeCategory = badge.getAttribute('data-category');
-                    badge.style.display = badgeCategory === category ? 'block' : 'none';
-                }
-            });
+            // Update stats overview
+            updateStatsOverview(badgesData);
+            
+            // Update badge progress
+            updateBadgeProgress(badgesData);
         }
         
-        // Load Badge Data
-        function loadBadgeData() {
-            const habitData = JSON.parse(localStorage.getItem('habitData') || '[]');
-            const badgeData = JSON.parse(localStorage.getItem('badgeData') || '{}');
-            
-            // Update badge progress based on actual data
-            updateBadgeProgress(habitData);
+        // Update Stats Overview
+        function updateStatsOverview(badgesData) {
+            const statValues = document.querySelectorAll('.stat-value');
+            if (statValues.length >= 4) {
+                statValues[0].textContent = badgesData.badges.filter(b => b.type === 'gold').length;
+                statValues[1].textContent = badgesData.badges.filter(b => b.type === 'silver').length;
+                statValues[2].textContent = badgesData.badges.filter(b => b.type === 'bronze' || b.type === 'platinum').length;
+                statValues[3].textContent = badgesData.totalDays;
+            }
         }
         
         // Update Badge Progress
-        function updateBadgeProgress(habitData) {
-            // Calculate current streak
-            let currentStreak = 0;
-            const today = new Date();
-            
-            for (let i = 0; i < habitData.length; i++) {
-                const habitDate = new Date(habitData[i].date);
-                const daysDiff = Math.floor((today - habitDate) / (1000 * 60 * 60 * 24));
-                
-                if (daysDiff === i) {
-                    const completedHabits = Object.values(habitData[i].habits || {}).filter(Boolean).length;
-                    const totalHabits = Object.keys(habitData[i].habits || {}).length;
-                    
-                    if (totalHabits > 0 && completedHabits / totalHabits >= 0.8) {
-                        currentStreak++;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            }
-            
+        function updateBadgeProgress(badgesData) {
             // Update Month Warrior progress
-            const monthWarriorBadge = document.querySelector('[data-category="streaks"] .badge-card:nth-child(5)');
-            if (monthWarriorBadge && currentStreak < 30) {
+            const monthWarriorBadge = document.querySelector('.badge-card.locked');
+            if (monthWarriorBadge && badgesData.currentStreak < 30) {
                 const progressFill = monthWarriorBadge.querySelector('.progress-fill');
                 const progressText = monthWarriorBadge.querySelector('.progress-text');
-                progressFill.style.width = (currentStreak / 30 * 100) + '%';
-                progressText.textContent = `${currentStreak}/30 days completed`;
+                progressFill.style.width = (badgesData.currentStreak / 30 * 100) + '%';
+                progressText.textContent = `${badgesData.currentStreak}/30 days completed`;
             }
             
             // Update Century Club progress
-            const centuryClubBadge = document.querySelector('[data-category="milestones"] .badge-card');
-            if (centuryClubBadge && habitData.length < 100) {
+            const centuryClubBadge = document.querySelectorAll('.badge-card.locked')[1];
+            if (centuryClubBadge && badgesData.totalDays < 100) {
                 const progressFill = centuryClubBadge.querySelector('.progress-fill');
                 const progressText = centuryClubBadge.querySelector('.progress-text');
-                progressFill.style.width = (habitData.length / 100 * 100) + '%';
-                progressText.textContent = `${habitData.length}/100 days completed`;
+                progressFill.style.width = (badgesData.totalDays / 100 * 100) + '%';
+                progressText.textContent = `${badgesData.totalDays}/100 days completed`;
             }
         }
         
-        // Check user authentication
+        // Update User Info for Badges Page
+        function updateUserInfo(user) {
+            if (!user) return;
+            
+            // Update user name
+            const userNameElements = document.querySelectorAll('#userName, .user-name');
+            userNameElements.forEach(element => {
+                if (element) element.textContent = user.name;
+            });
+
+            // Update user avatar
+            const userAvatarElements = document.querySelectorAll('#userAvatar, .user-avatar');
+            userAvatarElements.forEach(element => {
+                if (element) {
+                    if (user.picture) {
+                        element.style.backgroundImage = `url(${user.picture})`;
+                        element.style.backgroundSize = 'cover';
+                        element.style.backgroundPosition = 'center';
+                        element.textContent = '';
+                    } else {
+                        const initials = user.name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2);
+                        element.textContent = initials;
+                    }
+                }
+            });
+            
+            // Update user email
+            const userEmailElements = document.querySelectorAll('#userEmail, .user-email');
+            userEmailElements.forEach(element => {
+                if (element) element.textContent = user.email;
+            });
+        }
+        
+        // Check user authentication and load data
         window.addEventListener('load', () => {
-            const user = localStorage.getItem('googleUser');
-            if (!user) {
+            // Get real user data directly from localStorage
+            const userStr = localStorage.getItem('googleUser');
+            if (!userStr) {
                 window.location.href = 'signup-pro.html';
             } else {
+                const user = JSON.parse(userStr);
+                console.log('Loading real user in badges:', user);
+                
+                // Update user display with real data
+                updateUserInfo(user);
+                
+                // Load badge data
                 loadBadgeData();
             }
         });
@@ -1133,35 +695,5 @@
     <script src="js/theme-switcher.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/auth-guard.js"></script>
-    <script>
-        // Load Navigation Components
-        async function loadNavigation() {
-            try {
-                const response = await fetch('components/navigation.html');
-                const html = await response.text();
-                
-                // Split the HTML into header and footer
-                const parts = html.split('<!-- Footer -->');
-                const footerHtml = '<!-- Footer -->' + parts[1];
-                
-                // Insert only footer (no header for dashboard pages)
-                const footerContainer = document.getElementById('footer-container');
-                if (footerContainer) footerContainer.innerHTML = footerHtml;
-                
-                // Initialize navigation manager
-                if (window.navigationManager) {
-                    window.navigationManager.refreshUserUI();
-                }
-            } catch (error) {
-                console.error('Failed to load navigation:', error);
-            }
-        }
-        
-        // Load navigation when DOM is ready
-        document.addEventListener('DOMContentLoaded', loadNavigation);
-        
-        // Load Badges Data
-        loadBadgeData();
-    </script>
 </body>
 </html>

@@ -23,6 +23,9 @@
     <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <!-- User Data Manager -->
+    <script src="js/user-data-manager.js"></script>
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -636,6 +639,7 @@
                     <li><a href="tasks-pro.html"><i class="fas fa-tasks"></i> Tasks</a></li>
                     <li><a href="analytics-pro.html"><i class="fas fa-chart-bar"></i> Analytics</a></li>
                     <li><a href="badges-pro.html"><i class="fas fa-trophy"></i> Badges</a></li>
+                    <li><a href="leaderboard-pro.html"><i class="fas fa-medal"></i> Leaderboard</a></li>
                     <li><a href="profile-pro.html"><i class="fas fa-user"></i> Profile</a></li>
                     <li><a href="settings-pro.html"><i class="fas fa-cog"></i> Settings</a></li>
                 </ul>
@@ -647,7 +651,7 @@
             <!-- Dashboard Header -->
             <div class="dashboard-header fade-in-up">
                 <div class="welcome-message">
-                    <h1>Welcome back, John! 👋</h1>
+                    <h1 id="welcomeMessage">Welcome back! 👋</h1>
                     <p>Here's what's happening with your habits today.</p>
                 </div>
                 
@@ -660,8 +664,8 @@
                         <i class="fas fa-bell"></i>
                     </button>
                     <div class="user-menu">
-                        <div class="user-avatar" id="userAvatar">JD</div>
-                        <span id="userName">John Doe</span>
+                        <div class="user-avatar" id="userAvatar"></div>
+                        <span id="userName"></span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
@@ -674,11 +678,11 @@
                         <div class="stat-card-icon blue">
                             <i class="fas fa-fire"></i>
                         </div>
-                        <span class="stat-card-change positive">
+                        <span class="stat-card-change positive" style="display: none;">
                             <i class="fas fa-arrow-up"></i> +12%
                         </span>
                     </div>
-                    <div class="stat-card-value">15</div>
+                    <div class="stat-card-value" id="currentStreak">0</div>
                     <div class="stat-card-label">Current Streak</div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 75%"></div>
@@ -690,11 +694,11 @@
                         <div class="stat-card-icon green">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <span class="stat-card-change positive">
+                        <span class="stat-card-change positive" style="display: none;">
                             <i class="fas fa-arrow-up"></i> +8%
                         </span>
                     </div>
-                    <div class="stat-card-value">89%</div>
+                    <div class="stat-card-value" id="completionRate">0%</div>
                     <div class="stat-card-label">Completion Rate</div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 89%"></div>
@@ -706,11 +710,11 @@
                         <div class="stat-card-icon purple">
                             <i class="fas fa-calendar-check"></i>
                         </div>
-                        <span class="stat-card-change positive">
+                        <span class="stat-card-change positive" style="display: none;">
                             <i class="fas fa-arrow-up"></i> +5%
                         </span>
                     </div>
-                    <div class="stat-card-value">127</div>
+                    <div class="stat-card-value" id="totalDays">0</div>
                     <div class="stat-card-label">Total Days</div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 65%"></div>
@@ -722,11 +726,11 @@
                         <div class="stat-card-icon orange">
                             <i class="fas fa-trophy"></i>
                         </div>
-                        <span class="stat-card-change positive">
+                        <span class="stat-card-change positive" style="display: none;">
                             <i class="fas fa-arrow-up"></i> +2
                         </span>
                     </div>
-                    <div class="stat-card-value">24</div>
+                    <div class="stat-card-value" id="achievements">0</div>
                     <div class="stat-card-label">Achievements</div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 80%"></div>
@@ -1039,11 +1043,10 @@
         function updateHabitProgress() {
             const checkboxes = document.querySelectorAll('.habit-checkbox');
             const completed = document.querySelectorAll('.habit-checkbox.checked').length;
-            const total = checkboxes.length;
             
             const progressElement = document.getElementById('habitProgress');
             if (progressElement) {
-                progressElement.textContent = `${completed}/${total} completed`;
+                progressElement.textContent = `${completed}/${checkboxes.length} completed`;
             }
         }
         
@@ -1052,26 +1055,48 @@
             if (!user) return;
             
             // Update welcome message
-            const welcomeTitle = document.querySelector('.welcome-message h1');
-            if (welcomeTitle) {
-                welcomeTitle.textContent = 'Welcome back, ' + user.name.split(' ')[0] + '! 👋';
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            if (welcomeMessage) {
+                const hour = new Date().getHours();
+                let greeting = 'Good morning';
+                if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
+                else if (hour >= 17) greeting = 'Good evening';
+                
+                welcomeMessage.textContent = `${greeting}, ${user.name}!`;
             }
             
+            // Update user name in header
+            const userNameElements = document.querySelectorAll('#userName, .user-name');
+            userNameElements.forEach(element => {
+                if (element) element.textContent = user.name;
+            });
+
             // Update user avatar
-            const userAvatar = document.getElementById('userAvatar');
-            if (userAvatar) {
-                if (user.picture) {
-                    userAvatar.innerHTML = '<img src="' + user.picture + '" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">';
-                } else {
-                    userAvatar.textContent = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const userAvatarElements = document.querySelectorAll('#userAvatar, .user-avatar');
+            userAvatarElements.forEach(element => {
+                if (element) {
+                    if (user.picture) {
+                        element.style.backgroundImage = `url(${user.picture})`;
+                        element.style.backgroundSize = 'cover';
+                        element.style.backgroundPosition = 'center';
+                        element.textContent = '';
+                    } else {
+                        const initials = user.name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2);
+                        element.textContent = initials;
+                    }
                 }
-            }
+            });
             
-            // Update user name
-            const userName = document.getElementById('userName');
-            if (userName) {
-                userName.textContent = user.name;
-            }
+            // Update user email
+            const userEmailElements = document.querySelectorAll('#userEmail, .user-email');
+            userEmailElements.forEach(element => {
+                if (element) element.textContent = user.email;
+            });
         }
         
         function logout() {
@@ -1079,26 +1104,53 @@
             window.location.href = 'signup-pro.html';
         }
         
-        // Initialize Dashboard
+        // Initialize Dashboard with Real Data
         document.addEventListener('DOMContentLoaded', function() {
-            // Simulate user data
-            const currentUser = {
-                id: 'user123',
-                name: 'John Doe',
-                email: 'john@example.com',
-                picture: null
-            };
-            
-            updateUserInfo(currentUser);
-            loadTodayHabits();
-            initializeCharts();
-            
-            // Add fade-in animation to elements
-            const elements = document.querySelectorAll('.fade-in-up');
-            elements.forEach((el, index) => {
-                el.style.animationDelay = `${index * 0.1}s`;
-            });
+            // Wait for user data manager to load
+            setTimeout(() => {
+                // Get real user data directly from localStorage
+                const userStr = localStorage.getItem('googleUser');
+                if (userStr) {
+                    const user = JSON.parse(userStr);
+                    console.log('Loading real user:', user);
+                    updateUserInfo(user);
+                    loadTodayHabits();
+                    initializeCharts();
+                    updateDashboardStats();
+                } else {
+                    console.log('No user found, redirecting to signup');
+                    window.location.href = 'signup-pro.html';
+                }
+            }, 100);
         });
+        
+        // Update Dashboard Stats with Real Data
+        function updateDashboardStats() {
+            const stats = window.userDataManager.getBadgesData();
+            
+            // Update streak
+            const streakElement = document.getElementById('currentStreak');
+            if (streakElement) {
+                streakElement.textContent = `${stats.currentStreak}`;
+            }
+            
+            // Update completion rate
+            const completionElement = document.getElementById('completionRate');
+            if (completionElement) {
+                completionElement.textContent = `${stats.completionRate}%`;
+            }
+            
+            // Update total days
+            const daysElement = document.getElementById('totalDays');
+            if (daysElement) {
+                daysElement.textContent = `${stats.totalDays}`;
+            }
+
+            const achievementsElement = document.getElementById('achievements');
+            if (achievementsElement) {
+                achievementsElement.textContent = `${(stats.badges || []).length}`;
+            }
+        }    
         
         // Load Navigation Components
         async function loadNavigation() {
