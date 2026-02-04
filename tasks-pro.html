@@ -21,6 +21,9 @@
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="js/local-storage-database.js"></script>
+    <script src="js/user-data-manager.js"></script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -508,90 +511,74 @@
                         <span class="tasks-count">5 tasks</span>
                     </div>
                     <div class="tasks-list" id="todayTasks">
-                        <div class="task-item" onclick="toggleTask(this)">
+                        <div class="task-item" data-task-key="physics">
                             <div class="task-checkbox"></div>
                             <div class="task-content">
                                 <div class="task-title">Complete Physics Study Session</div>
                                 <div class="task-description">45 minutes of focused physics study</div>
                             </div>
-                            <span class="task-priority high">High</span>
+                            <div class="task-actions">
+                                <button class="task-action-btn" type="button" data-action="done">Done</button>
+                                <button class="task-action-btn is-negative" type="button" data-action="not_done">Not Done</button>
+                            </div>
                         </div>
-                        <div class="task-item" onclick="toggleTask(this)">
+                        <div class="task-item" data-task-key="exercise">
                             <div class="task-checkbox"></div>
                             <div class="task-content">
                                 <div class="task-title">Morning Exercise</div>
                                 <div class="task-description">50 pushups + 50 situps OR 2km run</div>
                             </div>
-                            <span class="task-priority medium">Medium</span>
+                            <div class="task-actions">
+                                <button class="task-action-btn" type="button" data-action="done">Done</button>
+                                <button class="task-action-btn is-negative" type="button" data-action="not_done">Not Done</button>
+                            </div>
                         </div>
-                        <div class="task-item completed" onclick="toggleTask(this)">
-                            <div class="task-checkbox checked"></div>
+                        <div class="task-item" data-task-key="wake_up">
+                            <div class="task-checkbox"></div>
                             <div class="task-content">
                                 <div class="task-title">Wake Up Before 6:00 AM</div>
                                 <div class="task-description">Early morning wake up routine</div>
                             </div>
-                            <span class="task-priority high">High</span>
+                            <div class="task-actions">
+                                <button class="task-action-btn" type="button" data-action="done">Done</button>
+                                <button class="task-action-btn is-negative" type="button" data-action="not_done">Not Done</button>
+                            </div>
                         </div>
-                        <div class="task-item" onclick="toggleTask(this)">
+                        <div class="task-item" data-task-key="screen_control">
                             <div class="task-checkbox"></div>
                             <div class="task-content">
                                 <div class="task-title">Screen Time Control</div>
                                 <div class="task-description">Less than 1 hour wasteful screen time</div>
                             </div>
-                            <span class="task-priority low">Low</span>
+                            <div class="task-actions">
+                                <button class="task-action-btn" type="button" data-action="done">Done</button>
+                                <button class="task-action-btn is-negative" type="button" data-action="not_done">Not Done</button>
+                            </div>
                         </div>
-                        <div class="task-item" onclick="toggleTask(this)">
+                        <div class="task-item" data-task-key="additional_subject_chemistrymaths">
                             <div class="task-checkbox"></div>
                             <div class="task-content">
                                 <div class="task-title">Additional Subject Study</div>
                                 <div class="task-description">Chemistry or Maths for 45 minutes</div>
                             </div>
-                            <span class="task-priority medium">Medium</span>
+                            <div class="task-actions">
+                                <button class="task-action-btn" type="button" data-action="done">Done</button>
+                                <button class="task-action-btn is-negative" type="button" data-action="not_done">Not Done</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Weekly Goals -->
-                <div class="tasks-section fade-in-up">
-                    <div class="tasks-section-header">
-                        <h3 class="tasks-section-title">Weekly Goals</h3>
-                        <span class="tasks-count">3 goals</span>
-                    </div>
-                    <div class="tasks-list" id="weeklyGoals">
-                        <div class="task-item" onclick="toggleTask(this)">
-                            <div class="task-checkbox"></div>
-                            <div class="task-content">
-                                <div class="task-title">Complete 5 Physics Sessions</div>
-                                <div class="task-description">45 minutes each session</div>
-                            </div>
-                            <span class="task-priority high">High</span>
-                        </div>
-                        <div class="task-item" onclick="toggleTask(this)">
-                            <div class="task-checkbox"></div>
-                            <div class="task-content">
-                                <div class="task-title">Exercise 5 Days This Week</div>
-                                <div class="task-description">Maintain physical fitness routine</div>
-                            </div>
-                            <span class="task-priority medium">Medium</span>
-                        </div>
-                        <div class="task-item" onclick="toggleTask(this)">
-                            <div class="task-checkbox"></div>
-                            <div class="task-content">
-                                <div class="task-title">Read 2 Books</div>
-                                <div class="task-description">Complete reading assignments</div>
-                            </div>
-                            <span class="task-priority low">Low</span>
-                        </div>
-                    </div>
+
+                <div class="submit-bar fade-in-up">
+                    <div class="submit-status" id="submitStatus">Select Done / Not Done for each task, then submit.</div>
+                    <button class="submit-btn" id="submitBtn" type="button">
+                        <i class="fas fa-paper-plane"></i>
+                        Submit Today
+                    </button>
                 </div>
             </div>
         </main>
     </div>
-    
-    <!-- Add Task Button -->
-    <button class="add-task-btn" onclick="addNewTask()">
-        <i class="fas fa-plus"></i>
-    </button>
     
     <!-- Theme Selector -->
     <div class="theme-selector">
@@ -629,60 +616,71 @@
         
         // Initialize theme
         initTheme();
-        
-        // Task Management
-        function toggleTask(taskElement) {
-            const checkbox = taskElement.querySelector('.task-checkbox');
-            checkbox.classList.toggle('checked');
-            taskElement.classList.toggle('completed');
-            
-            // Update task count
-            updateTaskCounts();
-            
-            // Animate the checkbox
-            checkbox.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                checkbox.style.transform = 'scale(1)';
-            }, 200);
+
+        function getTodayISO() {
+            return new Date().toISOString().split('T')[0];
         }
-        
+
+        function setTaskState(taskEl, state) {
+            const checkbox = taskEl.querySelector('.task-checkbox');
+            const doneBtn = taskEl.querySelector('[data-action="done"]');
+            const notDoneBtn = taskEl.querySelector('[data-action="not_done"]');
+
+            doneBtn.classList.toggle('is-active', state === true);
+            notDoneBtn.classList.toggle('is-active', state === false);
+            notDoneBtn.classList.toggle('is-negative', true);
+
+            checkbox.classList.toggle('checked', state === true);
+            taskEl.classList.toggle('completed', state === true);
+
+            taskEl.dataset.state = state === true ? 'done' : state === false ? 'not_done' : '';
+        }
+
+        function getSelectedState(taskEl) {
+            if (taskEl.dataset.state === 'done') return true;
+            if (taskEl.dataset.state === 'not_done') return false;
+            return null;
+        }
+
         function updateTaskCounts() {
-            // Update today's tasks count
-            const todayTasks = document.querySelectorAll('#todayTasks .task-item');
-            const completedToday = document.querySelectorAll('#todayTasks .task-item.completed').length;
+            const tasks = document.querySelectorAll('#todayTasks .task-item');
+            const doneCount = Array.from(tasks).filter(t => getSelectedState(t) === true).length;
             const todayCount = document.querySelector('#todayTasks').parentElement.querySelector('.tasks-count');
             if (todayCount) {
-                todayCount.textContent = `${completedToday}/${todayTasks.length} completed`;
-            }
-            
-            // Update weekly goals count
-            const weeklyGoals = document.querySelectorAll('#weeklyGoals .task-item');
-            const completedWeekly = document.querySelectorAll('#weeklyGoals .task-item.completed').length;
-            const weeklyCount = document.querySelector('#weeklyGoals').parentElement.querySelector('.tasks-count');
-            if (weeklyCount) {
-                weeklyCount.textContent = `${completedWeekly}/${weeklyGoals.length} completed`;
+                todayCount.textContent = `${doneCount}/${tasks.length} done`;
             }
         }
-        
-        function addNewTask() {
-            // Simple task creation (in a real app, this would open a modal)
-            const taskTitle = prompt('Enter task title:');
-            if (taskTitle) {
-                const todayTasks = document.getElementById('todayTasks');
-                const newTask = document.createElement('div');
-                newTask.className = 'task-item';
-                newTask.onclick = function() { toggleTask(this); };
-                newTask.innerHTML = `
-                    <div class="task-checkbox"></div>
-                    <div class="task-content">
-                        <div class="task-title">${taskTitle}</div>
-                        <div class="task-description">New task description</div>
-                    </div>
-                    <span class="task-priority medium">Medium</span>
-                `;
-                todayTasks.appendChild(newTask);
-                updateTaskCounts();
-            }
+
+        function setUIReadOnly(reasonText) {
+            const submitBtn = document.getElementById('submitBtn');
+            const status = document.getElementById('submitStatus');
+            if (status) status.textContent = reasonText;
+            if (submitBtn) submitBtn.disabled = true;
+
+            const buttons = document.querySelectorAll('#todayTasks .task-action-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+
+        function initializeTaskButtons() {
+            const tasks = document.querySelectorAll('#todayTasks .task-item');
+            tasks.forEach(taskEl => {
+                const doneBtn = taskEl.querySelector('[data-action="done"]');
+                const notDoneBtn = taskEl.querySelector('[data-action="not_done"]');
+
+                doneBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setTaskState(taskEl, true);
+                    updateTaskCounts();
+                });
+
+                notDoneBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setTaskState(taskEl, false);
+                    updateTaskCounts();
+                });
+            });
         }
         
         // User Management
@@ -713,16 +711,104 @@
         
         // Initialize Tasks
         document.addEventListener('DOMContentLoaded', function() {
-            // Simulate user data
-            const currentUser = {
-                id: 'user123',
-                name: 'John Doe',
-                email: 'john@example.com',
-                picture: null
-            };
-            
-            updateUserInfo(currentUser);
+            const userStr = localStorage.getItem('googleUser');
+            if (!userStr) {
+                window.location.href = 'signup-pro.html';
+                return;
+            }
+
+            const user = JSON.parse(userStr);
+            updateUserInfo(user);
+
+            const db = new window.LocalStorageDatabase();
+            const today = getTodayISO();
+            const existing = (db.getDailyRecords(today, today) || []).find(r => r.userId === user.id && r.date === today);
+
+            initializeTaskButtons();
             updateTaskCounts();
+
+            if (existing && existing.tasksSubmitted) {
+                // Load submitted state into UI
+                const tasks = document.querySelectorAll('#todayTasks .task-item');
+                tasks.forEach(taskEl => {
+                    const key = taskEl.dataset.taskKey;
+                    if (typeof existing[key] === 'boolean') {
+                        setTaskState(taskEl, existing[key]);
+                    }
+                });
+
+                updateTaskCounts();
+                setUIReadOnly('You already submitted tasks today. Come back tomorrow.');
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.addEventListener('click', () => {
+                const todayAgain = getTodayISO();
+                const already = (db.getDailyRecords(todayAgain, todayAgain) || []).find(r => r.userId === user.id && r.date === todayAgain);
+                if (already && already.tasksSubmitted) {
+                    setUIReadOnly('You already submitted tasks today. Come back tomorrow.');
+                    return;
+                }
+
+                const tasks = document.querySelectorAll('#todayTasks .task-item');
+                const payload = {};
+                let completedCount = 0;
+                let hasUnselected = false;
+
+                tasks.forEach(taskEl => {
+                    const key = taskEl.dataset.taskKey;
+                    const state = getSelectedState(taskEl);
+                    if (state === null) {
+                        hasUnselected = true;
+                    }
+                    payload[key] = state === true;
+                    if (state === true) completedCount++;
+                });
+
+                if (hasUnselected) {
+                    const status = document.getElementById('submitStatus');
+                    status.textContent = 'Please select Done / Not Done for all 5 tasks before submitting.';
+                    return;
+                }
+
+                const total = tasks.length;
+                const productivity = Math.round((completedCount / total) * 100);
+                const valid_day = completedCount === total;
+
+                const recordData = {
+                    tasksSubmitted: true,
+                    tasksCompleted: completedCount,
+                    tasksTotal: total,
+                    productivity,
+                    valid_day,
+                    ...payload
+                };
+
+                if (already) {
+                    db.updateDailyRecord(already.id, {
+                        userId: user.id,
+                        date: todayAgain,
+                        ...recordData
+                    });
+                } else {
+                    db.createDailyRecord({
+                        userId: user.id,
+                        date: todayAgain,
+                        ...recordData
+                    });
+                }
+
+                if (window.userDataManager) {
+                    window.userDataManager.setCurrentUserFromLocalStorage();
+                }
+
+                const status = document.getElementById('submitStatus');
+                if (status) {
+                    status.textContent = 'Submitted successfully. You already submitted tasks today.';
+                }
+
+                setUIReadOnly('You already submitted tasks today. Come back tomorrow.');
+            });
             
             // Add fade-in animation to elements
             const elements = document.querySelectorAll('.fade-in-up');
